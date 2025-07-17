@@ -1,8 +1,8 @@
-import httpx
+import httpx  
 import json
 import os
 from typing import Dict, Any
-from models import Recipe, RecipeRequest
+from model import Recipe, RecipeRequest
 
 
 class RecipeService:
