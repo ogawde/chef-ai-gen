@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from model import RecipeRequest, RecipeResponse, ErrorResponse, Recipe
 from services.recipe_service import recipe_service
+from services.content_validator import validate_ingredients
 
 app = FastAPI(
     title="PantryChef AI API",
@@ -69,6 +70,13 @@ async def generate_recipe(request: RecipeRequest):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="At least one ingredient is required"
+            )
+        
+        is_valid, error_message = validate_ingredients(request.ingredients)
+        if not is_valid:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=error_message or "Invalid ingredients detected"
             )
         
         recipe = await recipe_service.generate_recipe(request)

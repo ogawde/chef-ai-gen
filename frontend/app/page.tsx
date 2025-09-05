@@ -48,7 +48,7 @@ export default function Home() {
               Transform your pantry ingredients into delicious recipes with AI.
               Fight food waste and discover new dishes tailored to your dietary needs.
             </p>
-            
+
             <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
               <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium">
                 <ChefHat className="h-4 w-4" />

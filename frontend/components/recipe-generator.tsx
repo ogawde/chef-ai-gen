@@ -1,17 +1,6 @@
 "use client";
 
-/**
- * Recipe Generator Component
- * 
- * This is the main form where users input their ingredients and preferences.
- * 
- * Data Flow:
- * 1. User fills in ingredients and selects preferences
- * 2. On submit, validates input
- * 3. Calls API to generate recipe
- * 4. Emits recipe to parent component via onRecipeGenerated callback
- * 5. Handles loading states and errors
- */
+
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Loader2, ChefHat, Sparkles } from "lucide-react";
 import { generateRecipe, ApiError } from "@/lib/api";
 import { Recipe, DIETARY_RESTRICTIONS, CUISINE_TYPES, COOKING_TIMES } from "@/lib/types";
+import { validateIngredients } from "@/lib/content-validation";
 import { toast } from "sonner";
 
 interface RecipeGeneratorProps {
@@ -35,28 +25,25 @@ interface RecipeGeneratorProps {
 }
 
 export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
-  // Form state
+
   const [ingredients, setIngredients] = useState("");
   const [dietaryRestriction, setDietaryRestriction] = useState("None");
   const [cuisineType, setCuisineType] = useState("Any");
   const [cookingTime, setCookingTime] = useState("No Preference");
-  
-  // UI state
+
+
   const [isLoading, setIsLoading] = useState(false);
 
-  /**
-   * Handle form submission and recipe generation.
-   * Validates input, calls API, and handles the response.
-   */
+
   const handleGenerate = async () => {
-    // Validate ingredients input
+
     if (!ingredients.trim()) {
       toast.error("Please enter at least one ingredient");
       return;
     }
 
-    // Parse ingredients from textarea
-    // Split by commas or newlines and trim whitespace
+
+
     const ingredientsList = ingredients
       .split(/[,\n]/)
       .map((item) => item.trim())
@@ -67,11 +54,16 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
       return;
     }
 
-    // Set loading state
+    const validation = validateIngredients(ingredientsList);
+    if (!validation.isValid) {
+      toast.error(validation.error || "Invalid ingredients detected");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      // Call API to generate recipe
+
       const response = await generateRecipe({
         ingredients: ingredientsList,
         dietary_restriction: dietaryRestriction,
@@ -79,11 +71,11 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
         cooking_time: cookingTime,
       });
 
-      // Success! Pass recipe to parent component
+
       toast.success("Recipe generated successfully! 🎉");
       onRecipeGenerated(response.recipe);
     } catch (error) {
-      // Handle errors
+
       if (error instanceof ApiError) {
         toast.error(`Error: ${error.message}`);
       } else {
@@ -91,7 +83,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
       }
       console.error("Recipe generation error:", error);
     } finally {
-      // Reset loading state
+
       setIsLoading(false);
     }
   };
@@ -108,7 +100,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Ingredients Input */}
+        {}
         <div className="space-y-2">
           <Label htmlFor="ingredients" className="text-base font-semibold">
             Your Ingredients
@@ -126,7 +118,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
           </p>
         </div>
 
-        {/* Dietary Restrictions */}
+        {}
         <div className="space-y-2">
           <Label htmlFor="dietary" className="text-base font-semibold">
             Dietary Restrictions
@@ -149,7 +141,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
           </Select>
         </div>
 
-        {/* Cuisine Type */}
+        {}
         <div className="space-y-2">
           <Label htmlFor="cuisine" className="text-base font-semibold">
             Cuisine Style
@@ -172,7 +164,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
           </Select>
         </div>
 
-        {/* Cooking Time */}
+        {}
         <div className="space-y-2">
           <Label htmlFor="time" className="text-base font-semibold">
             Cooking Time
@@ -195,7 +187,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
           </Select>
         </div>
 
-        {/* Generate Button */}
+        {}
         <Button
           onClick={handleGenerate}
           disabled={isLoading}

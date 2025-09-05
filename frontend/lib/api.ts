@@ -56,12 +56,12 @@ export async function generateRecipe(
 
 export async function healthCheck(): Promise<boolean> {
   const apiUrl = getApiUrl();
-  
+
   try {
     const response = await fetch(`${apiUrl}/health`, {
       method: "GET",
     });
-    
+
     return response.ok;
   } catch {
     return false;

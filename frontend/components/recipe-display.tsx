@@ -1,14 +1,6 @@
 "use client";
 
-/**
- * Recipe Display Component
- * 
- * Displays the generated recipe in a beautiful, user-friendly format.
- * Shows title, ingredients (with checkboxes), instructions, and metadata.
- * 
- * Data Flow:
- * Recipe from API -> This component -> Rendered UI
- */
+
 
 import { Recipe } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,7 +17,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
   return (
     <Card className="w-full max-w-3xl mx-auto shadow-xl">
       <CardHeader className="space-y-3 pb-6">
-        {/* Recipe Title */}
+        {}
         <div className="flex items-start gap-3">
           <ChefHat className="h-8 w-8 text-primary flex-shrink-0 mt-1" />
           <div className="flex-1">
@@ -38,7 +30,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
           </div>
         </div>
 
-        {/* Recipe Metadata */}
+        {}
         <div className="flex flex-wrap gap-4 pt-2">
           <div className="flex items-center gap-2 text-sm">
             <Clock className="h-4 w-4 text-muted-foreground" />
@@ -52,7 +44,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Ingredients Section */}
+        {}
         <div className="space-y-3">
           <h3 className="text-xl font-bold flex items-center gap-2">
             <span className="bg-primary/10 text-primary px-3 py-1 rounded-md">
@@ -80,7 +72,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
 
         <Separator className="my-6" />
 
-        {/* Instructions Section */}
+        {}
         <div className="space-y-4">
           <h3 className="text-xl font-bold flex items-center gap-2">
             <span className="bg-primary/10 text-primary px-3 py-1 rounded-md">
@@ -103,7 +95,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
 
         <Separator className="my-6" />
 
-        {/* Action Buttons */}
+        {}
         <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <Button
             onClick={onGenerateAnother}
@@ -124,7 +116,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
           </Button>
         </div>
 
-        {/* Tips Section */}
+        {}
         <div className="mt-6 p-4 bg-muted/50 rounded-lg">
           <p className="text-sm text-muted-foreground italic">
             💡 <strong>Tip:</strong> Use the checkboxes next to ingredients as you prepare them to keep track of your progress!
