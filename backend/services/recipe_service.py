@@ -1,6 +1,7 @@
-import httpx  
+import httpx
 import json
 import os
+import re
 from typing import Dict, Any
 from model import Recipe, RecipeRequest
 
@@ -33,7 +34,7 @@ Important Guidelines:
 3. Give the recipe an appealing, descriptive name
 4. Provide clear, step-by-step instructions
 
-Return ONLY a valid JSON object with this exact structure (no additional text):
+Return ONLY a valid JSON object with this exact structure (no additional text, no Markdown formatting like **bold**):
 {{
     "title": "Recipe Name Here",
     "ingredients": ["ingredient 1 with measurement", "ingredient 2 with measurement"],
@@ -89,10 +90,18 @@ Return ONLY a valid JSON object with this exact structure (no additional text):
         
         ai_content = ai_content.strip()
         
+        ai_content = re.sub(r':\s*\*\*"', ': "', ai_content)
+        ai_content = re.sub(r'"\*\*(\s*[,}\]])', r'"\1', ai_content)
+        
         try:
             recipe_dict = json.loads(ai_content)
         except json.JSONDecodeError as e:
             raise ValueError(f"AI did not return valid JSON: {str(e)}\nContent: {ai_content}")
+        
+        if "prep_time" in recipe_dict and not isinstance(recipe_dict["prep_time"], str):
+            recipe_dict["prep_time"] = str(recipe_dict["prep_time"])
+        if "servings" in recipe_dict and not isinstance(recipe_dict["servings"], str):
+            recipe_dict["servings"] = str(recipe_dict["servings"])
         
         try:
             recipe = Recipe(**recipe_dict)
