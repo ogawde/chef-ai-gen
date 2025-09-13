@@ -17,6 +17,8 @@ class RecipeService:
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
+            "HTTP-Referer": "https://cooksy.curr.xyz",
+            "X-Title": "cooksy AI",
         }
     
     def _build_prompt(self, request: RecipeRequest) -> str:
@@ -49,7 +51,7 @@ Return ONLY a valid JSON object with this exact structure (no additional text, n
         prompt = self._build_prompt(request)
         
         payload = {
-            "model": "mistralai/mistral-7b-instruct",
+            "model": "mistralai/mistral-small-3.1-24b-instruct:free",
             "messages": [
                 {
                     "role": "user",
