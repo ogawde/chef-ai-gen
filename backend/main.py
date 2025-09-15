@@ -4,9 +4,9 @@ load_dotenv()
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from model import RecipeRequest, RecipeResponse, ErrorResponse, Recipe
+from model import RecipeRequest, RecipeResponse, ErrorResponse
 from services.recipe_service import recipe_service
-from services.content_validator import validate_ingredients
+from services.content_validator import normalize_ingredients, validate_ingredients
 
 app = FastAPI(
     title="PantryChef AI API",
@@ -71,13 +71,22 @@ async def generate_recipe(request: RecipeRequest):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="At least one ingredient is required"
             )
-        
-        is_valid, error_message = validate_ingredients(request.ingredients)
+
+        normalized_ingredients = normalize_ingredients(request.ingredients)
+        if len(normalized_ingredients) == 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No valid food ingredients found in input"
+            )
+
+        is_valid, error_message = validate_ingredients(normalized_ingredients)
         if not is_valid:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=error_message or "Invalid ingredients detected"
             )
+
+        request.ingredients = normalized_ingredients
         
         recipe = await recipe_service.generate_recipe(request)
         
