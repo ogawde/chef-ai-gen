@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -14,10 +15,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const overusedGrotesk = localFont({
+  src: "../public/fonts/overused-grotesk/variable/OverusedGroteskRoman-VF.woff2",
+  variable: "--font-overused-grotesk",
+  weight: "100 900",
+  style: "normal",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Cooksy",
   description:
     "Cooksy helps you turn pantry ideas into recipes with a simple chat-style experience.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +41,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${overusedGrotesk.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"

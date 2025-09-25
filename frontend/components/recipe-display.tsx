@@ -55,7 +55,7 @@ export function RecipeDisplay({ recipe, onGenerateAnother }: RecipeDisplayProps)
           </section>
           <Separator />
           <div>
-            <Button onClick={onGenerateAnother} variant="outline">
+            <Button onClick={onGenerateAnother} variant="outline" className="h-11 md:h-9">
               <RefreshCw className="mr-2 size-4" />
               New prompt
             </Button>

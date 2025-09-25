@@ -119,4 +119,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .font-overused-grotesk {
+    font-family: var(--font-overused-grotesk), var(--font-geist-sans), sans-serif;
+  }
 }

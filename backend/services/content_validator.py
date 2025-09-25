@@ -7,14 +7,10 @@ BLOCKED_TERMS = [
     'poison', 'toxic', 'chemical', 'bleach', 'detergent', 'soap', 'paint',
     'gasoline', 'fuel', 'alcohol', 'drug', 'medicine', 'pill', 'tablet',
     'plastic', 'metal', 'glass', 'wood', 'stone', 'rock', 'dirt', 'soil',
-    'grass',
+    'grass', 'weed', 'cannabis', 'marijuana', 'cocaine', 'heroin', 'meth', 'lsd',
     'paper', 'fabric', 'cloth', 'rubber', 'leather',
-    'cannabis', 'marijuana', 'cocaine', 'heroin', 'meth', 'lsd',
     'feces', 'urine', 'blood', 'vomit', 'excrement',
     'knife', 'weapon', 'gun', 'bullet', 'explosive',
-    'dog', 'cat', 'hamster', 'rabbit', 'bird', 'parrot', 'canary',
-    'dolphin', 'whale', 'seal', 'penguin', 'elephant', 'tiger', 'lion',
-    'insect', 'bug', 'worm', 'spider', 'roach', 'rat', 'mouse',
 ]
 
 

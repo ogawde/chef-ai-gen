@@ -40,7 +40,7 @@ export default function RecipePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="fixed right-4 top-4 z-50">
+      <div className="fixed right-3 top-[max(0.75rem,env(safe-area-inset-top))] z-50 sm:right-4 sm:top-4">
         <ThemeToggle />
       </div>
 

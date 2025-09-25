@@ -137,7 +137,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
               type="submit"
               size="icon"
               disabled={isSubmitDisabled}
-              className="absolute bottom-3 right-3 rounded-full"
+              className="absolute bottom-3 right-3 size-11 rounded-full md:size-9"
               aria-label="Submit message"
             >
               {isLoading ? (
@@ -153,7 +153,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
               onValueChange={setDietaryRestriction}
               disabled={isLoading}
             >
-              <SelectTrigger className="min-w-0 w-full">
+              <SelectTrigger className="min-h-11 min-w-0 w-full md:min-h-9">
                 <SelectValue placeholder="Dietary restriction" />
               </SelectTrigger>
               <SelectContent>
@@ -165,7 +165,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
               </SelectContent>
             </Select>
             <Select value={cuisineType} onValueChange={setCuisineType} disabled={isLoading}>
-              <SelectTrigger className="min-w-0 w-full">
+              <SelectTrigger className="min-h-11 min-w-0 w-full md:min-h-9">
                 <SelectValue placeholder="Cuisine style" />
               </SelectTrigger>
               <SelectContent>
@@ -177,7 +177,7 @@ export function RecipeGenerator({ onRecipeGenerated }: RecipeGeneratorProps) {
               </SelectContent>
             </Select>
             <Select value={cookingTime} onValueChange={setCookingTime} disabled={isLoading}>
-              <SelectTrigger className="min-w-0 w-full">
+              <SelectTrigger className="min-h-11 min-w-0 w-full md:min-h-9">
                 <SelectValue placeholder="Cooking time" />
               </SelectTrigger>
               <SelectContent>
