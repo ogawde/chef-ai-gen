@@ -17,7 +17,7 @@ Currently live at -  [cooksy.curr.xyz](https://cooksy.curr.xyz)
 - Set cuisine and dietary preferences before generating
 - View a dedicated recipe result page after generation
 - Clean, responsive UI with light and dark theme support
-- Uses the STEP-FUN 2.5 api for backend 
+- Uses the openrouter/free api for backend 
 
 ## Local setup
 

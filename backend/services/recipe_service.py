@@ -9,33 +9,35 @@ class RecipeService:
     def __init__(self):
         self.api_key = os.getenv("OPENROUTER_API_KEY")
         self.api_url = "https://openrouter.ai/api/v1/chat/completions"
-        
+        self.model = os.getenv("OPENROUTER_MODEL", "openrouter/free")
+        try:
+            self.max_tokens = int(os.getenv("OPENROUTER_MAX_TOKENS", "1800"))
+        except ValueError:
+            self.max_tokens = 1800
+
         if not self.api_key:
             raise ValueError("OPENROUTER_API_KEY environment variable is not set")
-        
+
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://cooksy.curr.xyz",
-            "X-Title": "cooksy AI",
+            "X-OpenRouter-Title": "cooksy AI",
         }
     
     def _build_prompt(self, request: RecipeRequest) -> str:
         ingredients_list = ", ".join(request.ingredients)
-        prompt = f"""Create one practical recipe using ONLY these main ingredients: {ingredients_list}.
-Allowed extra staples: salt, pepper, cooking oil, water.
+        diet = request.dietary_restriction or "None"
+        cuisine = request.cuisine_type or "Any"
+        cook_time = request.cooking_time or "No Preference"
+        return f"""Pantry: {ingredients_list}
+Extras allowed: salt, pepper, oil, water.
+Diet: {diet} | Cuisine: {cuisine} | Time: {cook_time}
 
-Preferences:
-- Dietary Restriction: {request.dietary_restriction}
-- Cuisine Style: {request.cuisine_type}
-- Cooking Time: {request.cooking_time}
+Output one JSON object only—no markdown fences, no text before or after.
+Keys: title (string), ingredients (array of strings), instructions (array of strings), prep_time (string), servings (string).
 
-Return only valid JSON (no markdown, no explanation) with keys:
-title, ingredients, instructions, prep_time, servings.
-Use concrete values, real measurements, and clear steps.
-Do not output placeholders like "...", "ingredient 1", or "step 1"."""
-        
-        return prompt
+Rules: Use only the pantry items above + extras. ingredients must be a string array (not an object), each item "amount + name". instructions: 4–7 short steps, one sentence each. Be brief: no intro, no tips paragraph, no placeholders."""
 
     def _build_fallback_recipe(self, request: RecipeRequest) -> Recipe:
         cleaned_ingredients = [item.strip() for item in request.ingredients if item.strip()]
@@ -62,12 +64,48 @@ Do not output placeholders like "...", "ingredient 1", or "step 1"."""
             prep_time="25 minutes",
             servings="2",
         )
-    
+
+    @staticmethod
+    def _coerce_string_list(raw) -> list[str]:
+        """Turn list/dict/nested shapes from the model into a flat list of strings."""
+        if raw is None:
+            return []
+        if isinstance(raw, str):
+            s = raw.strip()
+            return [s] if s else []
+        if isinstance(raw, list):
+            out: list[str] = []
+            for x in raw:
+                out.extend(RecipeService._coerce_string_list(x))
+            return [y for y in out if y]
+        if isinstance(raw, dict):
+            out = []
+            for v in raw.values():
+                out.extend(RecipeService._coerce_string_list(v))
+            return [y for y in out if y]
+        s = str(raw).strip()
+        return [s] if s else []
+
+    def _normalize_recipe_dict(self, recipe_dict: dict, request: RecipeRequest) -> dict:
+        recipe_dict["ingredients"] = self._coerce_string_list(recipe_dict.get("ingredients"))
+        recipe_dict["instructions"] = self._coerce_string_list(recipe_dict.get("instructions"))
+        if not recipe_dict["ingredients"]:
+            recipe_dict["ingredients"] = [
+                f"{item.strip()} (as needed)"
+                for item in request.ingredients
+                if item and str(item).strip()
+            ] or ["mixed pantry ingredients (as needed)"]
+        if not recipe_dict["instructions"]:
+            recipe_dict["instructions"] = [
+                "Prepare ingredients as needed, then cook until done and season to taste.",
+            ]
+        return recipe_dict
+
     async def generate_recipe(self, request: RecipeRequest) -> Recipe:
         prompt = self._build_prompt(request)
         
         payload = {
-            "model": "stepfun/step-3.5-flash:free",
+            "model": self.model,
             "messages": [
                 {
                     "role": "user",
@@ -75,13 +113,10 @@ Do not output placeholders like "...", "ingredient 1", or "step 1"."""
                 }
             ],
             "temperature": 0.2,
-            "max_tokens": 4000,
-            "reasoning": {
-                "effort": "low",
-            },
+            "max_tokens": self.max_tokens,
         }
-        
-        async with httpx.AsyncClient(timeout=30.0) as client:
+
+        async with httpx.AsyncClient(timeout=httpx.Timeout(90.0)) as client:
             try:
                 response = await client.post(
                     self.api_url,
@@ -138,7 +173,9 @@ Do not output placeholders like "...", "ingredient 1", or "step 1"."""
             recipe_dict["prep_time"] = str(recipe_dict["prep_time"])
         if "servings" in recipe_dict and not isinstance(recipe_dict["servings"], str):
             recipe_dict["servings"] = str(recipe_dict["servings"])
-        
+
+        recipe_dict = self._normalize_recipe_dict(recipe_dict, request)
+
         try:
             recipe = Recipe(**recipe_dict)
         except Exception as e:
